@@ -201,9 +201,9 @@ Fungsi:
 
 **Checklist:**
 
-* [ ] Bisa input URL
-* [ ] Short URL berhasil dibuat
-* [ ] Redirect berjalan dengan benar
+* [✔] Bisa input URL
+* [✔] Short URL berhasil dibuat
+* [✔] Redirect berjalan dengan benar
 
 ---
 
