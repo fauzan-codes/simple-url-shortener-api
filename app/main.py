@@ -47,5 +47,8 @@ def redirect_url(code: str, db: Session = Depends(get_db)):
 
     if not url:
         raise HTTPException(status_code=404, detail="URL not found")
+    
+    url.clicks += 1
+    db.commit()
 
     return RedirectResponse(url.original_url)

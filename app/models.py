@@ -1,5 +1,4 @@
 # app\models.py
-
 from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from app.database import Base
@@ -11,3 +10,5 @@ class URL(Base):
     original_url = Column(String, nullable=False)
     short_code = Column(String, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    clicks = Column(Integer, default=0)
