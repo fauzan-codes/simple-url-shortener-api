@@ -1,14 +1,14 @@
 #  app\main.py
-from fastapi.templating import Jinja2Templates
 from fastapi import Request, FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse, HTMLResponse
 
-from app.database import engine, Base, SessionLocal
 from app import models
+from app.database import engine, Base, SessionLocal
 from app.schemas import URLCreate
 from app.utils import generate_short_code
 
+from sqlalchemy.orm import Session
 from urllib.parse import urlparse
 import re
 
