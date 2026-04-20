@@ -1,51 +1,118 @@
-# 🚀 FastAPI URL Shortener
+# 🚀 FastAPI URL Shortener (Advanced Version)
 
 ## 📌 Deskripsi Project
 
-Project ini adalah sebuah **URL Shortener API** yang dibuat menggunakan:
+Project ini adalah sebuah **URL Shortener API modern** yang dibangun menggunakan:
 
-* ⚡ FastAPI (Backend Framework)
-* 🐘 PostgreSQL (Database)
+* ⚡ FastAPI (High-performance backend framework)
+* 🐘 PostgreSQL (Relational Database)
+* 🧠 SQLAlchemy (ORM)
 
-Aplikasi ini memungkinkan user untuk:
-
-* Memasukkan URL panjang
-* Mendapatkan URL pendek
-* Mengakses URL pendek untuk redirect ke URL asli
-
-Project ini dibuat sebagai **portfolio backend project** untuk memahami:
-
-* REST API
-* Database integration
-* Backend architecture
+Aplikasi ini tidak hanya mempersingkat URL, tetapi juga dilengkapi dengan fitur **analytics, keamanan, dan manajemen link** sehingga mendekati sistem yang digunakan di dunia nyata.
 
 ---
 
 ## 🎯 Tujuan Project
 
-* Belajar FastAPI secara praktis
-* Menggunakan PostgreSQL dalam project nyata
-* Memahami alur kerja backend (request → process → response)
-* Membuat project yang bisa digunakan di dunia nyata
+Project ini dibuat untuk:
+
+* Memahami cara kerja **REST API secara real-world**
+* Mengintegrasikan backend dengan **database production-ready**
+* Membangun sistem dengan **arsitektur scalable**
+* Membuat project **portfolio backend level advanced**
+
+---
+
+## ✨ Fitur Utama
+
+### 🔗 Core Features
+
+* Shorten URL dari link panjang
+* Redirect otomatis ke URL asli
+* Custom alias (custom short link)
+* Duplicate URL detection (hindari data ganda)
+
+---
+
+### 🛡️ Validation & Security
+
+* Validasi URL menggunakan Pydantic
+* Input filtering (mencegah data invalid)
+* Rate limiting (anti spam request)
+
+---
+
+### 📊 Analytics System
+
+* Hit counter (jumlah klik)
+* Tracking waktu akses
+* Logging IP Address (optional)
+* Data analytics per URL
+
+---
+
+### ⏳ Link Management
+
+* Expired link (link kadaluarsa)
+* Delete / manage URL
+* Ownership system (jika pakai login)
+
+---
+
+### 🔐 Authentication (Optional)
+
+* User login system
+* Setiap link memiliki owner
+* Dashboard personal user
+
+---
+
+### 📱 Additional Features
+
+* QR Code generator untuk setiap link
+* API documentation otomatis (Swagger)
+* Siap integrasi frontend
 
 ---
 
 ## 🧠 Cara Kerja Sistem
 
-1. User mengirim URL panjang
-2. Sistem membuat short code unik (contoh: `abc123`)
-3. Data disimpan ke database:
+### 🔄 Flow Utama
+
+1. User mengirim URL:
+
+   ```
+   POST /shorten
+   ```
+
+2. Backend melakukan:
+
+   * Validasi URL
+   * Cek apakah URL sudah ada (duplicate check)
+
+3. Sistem membuat short code unik:
+
+   ```
+   abc123
+   ```
+
+4. Data disimpan ke database:
 
    ```
    abc123 → https://example.com
    ```
-4. Saat user mengakses:
+
+5. Saat user mengakses:
 
    ```
-   /abc123
+   GET /abc123
    ```
 
-   → sistem akan redirect ke URL asli
+6. Backend:
+
+   * Cek apakah link expired
+   * Simpan data analytics (klik, waktu, dll)
+   * Redirect ke URL asli
 
 ---
 
@@ -56,6 +123,7 @@ Project ini dibuat sebagai **portfolio backend project** untuk memahami:
 * PostgreSQL
 * SQLAlchemy
 * Uvicorn
+* Pydantic
 
 ---
 
@@ -71,6 +139,8 @@ url-shortener/
 │   ├── schemas.py
 │   ├── routes/
 │   │   └── url.py
+│   ├── services/
+│   │   └── url_service.py
 │
 ├── requirements.txt
 └── README.md
@@ -78,171 +148,87 @@ url-shortener/
 
 ---
 
-## 🪜 ROADMAP PENGERJAAN PROJECT
+## 🗄️ Struktur Database
 
----
-
-### 🟢 PHASE 0 — Setup Environment
-
-**Tujuan:** Menyiapkan semua kebutuhan project
-
-#### ✅ Langkah:
-
-* Install Python
-* Install PostgreSQL (via Laragon)
-* Install pip package:
-
-  ```
-  pip install fastapi uvicorn sqlalchemy psycopg2-binary
-  ```
-
----
-
-### 🟢 PHASE 1 — Belajar Basic FastAPI
-
-**Tujuan:** Memahami API dasar
-
-#### ✅ Yang dipelajari:
-
-* Routing (`GET`, `POST`)
-* Response JSON
-
-#### ✅ Output:
-
-Endpoint sederhana:
-
-```
-GET /
-```
-
----
-
-### 🟢 PHASE 2 — Setup Database PostgreSQL
-
-**Tujuan:** Membuat database
-
-#### ✅ Langkah:
-
-* Buat database:
-
-  ```
-  url_shortener
-  ```
-* Setup koneksi di `database.py`
-
----
-
-### 🟢 PHASE 3 — Setup SQLAlchemy
-
-**Tujuan:** Menghubungkan Python dengan database
-
-#### ✅ Buat:
-
-* `database.py` → koneksi DB
-* `models.py` → struktur tabel
-
-#### ✅ Tabel utama:
+### 📌 Table: urls
 
 ```
 id
 original_url
 short_code
 created_at
+expires_at
+click_count
+user_id (optional)
+```
+
+### 📌 Table: clicks (analytics)
+
+```
+id
+url_id
+timestamp
+ip_address
 ```
 
 ---
 
-### 🟢 PHASE 4 — Core Feature (INTI)
+## 🔌 API Endpoints
 
-#### 🔹 1. Generate Short Code
-
-* Random string (6 karakter)
-
-#### 🔹 2. Endpoint: Create Short URL
+### 🔹 Create Short URL
 
 ```
 POST /shorten
 ```
 
-Body:
-
-```
-{
-  "url": "https://example.com"
-}
-```
-
----
-
-#### 🔹 3. Simpan ke Database
-
-Mapping:
-
-```
-short_code → original_url
-```
-
----
-
-#### 🔹 4. Endpoint Redirect
+### 🔹 Redirect URL
 
 ```
 GET /{code}
 ```
 
-Fungsi:
+### 🔹 Delete URL
 
-* Ambil data dari DB
-* Redirect ke URL asli
+```
+DELETE /url/{id}
+```
 
----
+### 🔹 Get Analytics
 
-### 🟢 PHASE 5 — Testing
+```
+GET /analytics/{code}
+```
 
-**Checklist:**
+### 🔹 Generate QR Code
 
-* [✔] Bisa input URL
-* [✔] Short URL berhasil dibuat
-* [✔] Redirect berjalan dengan benar
-
----
-
-### 🟢 PHASE 6 — UI Sederhana (Optional)
-
-* Form input URL
-* Tampilkan hasil short link
+```
+GET /qr/{code}
+```
 
 ---
 
-### 🟢 PHASE 7 — Improvement (Next Level)
+## 🧪 Testing
 
-Fitur tambahan:
+Checklist:
 
-* Custom alias
-* Hit counter
-* Expired link
-* Login user
-* Dashboard
-* Analytics
-
----
-
-## ⚠️ Tantangan yang Mungkin Dihadapi
-
-* Error koneksi PostgreSQL
-* Salah konfigurasi database
-* Routing tidak terbaca
-* Debugging redirect
+* [✔] URL validasi berjalan
+* [✔] Short link berhasil dibuat
+* [✔] Redirect berjalan
+* [✔] Duplicate URL tidak dibuat ulang
+* [✔] Expired link terblokir
+* [✔] Analytics tercatat
 
 ---
 
-## 🚀 Cara Menjalankan Project
+## 🌐 Cara Menjalankan Project (Local)
+
+### 1. Jalankan server
 
 ```
 uvicorn app.main:app --reload
 ```
 
-Buka:
+### 2. Akses API Docs
 
 ```
 http://127.0.0.1:8000/docs
@@ -250,11 +236,55 @@ http://127.0.0.1:8000/docs
 
 ---
 
+## 🌍 Testing Online (Ngrok)
+
+Untuk testing bersama teman:
+
+### 1. Jalankan server
+
+```
+uvicorn app.main:app --reload
+```
+
+### 2. Jalankan ngrok
+
+```
+ngrok http 8000
+```
+
+### 3. Gunakan URL dari ngrok
+
+```
+https://xxxxx.ngrok.io
+```
+
+---
+
+## ⚠️ Catatan Ngrok
+
+* URL akan berubah setiap restart
+* Gunakan hanya untuk testing
+* Pastikan BASE_URL mengikuti URL ngrok
+
+---
+
+## 🚀 Deployment (Next Step)
+
+Platform yang bisa digunakan:
+
+* Railway
+* Render
+* VPS / Cloud Server
+
+---
+
 ## 📈 Future Development
 
-* Deploy ke cloud (Railway / Render)
-* Tambah authentication
-* Tambah analytics dashboard
+* Custom domain (contoh: fauzan.my.id)
+* Advanced analytics dashboard (grafik)
+* Geo location tracking
+* API key system
+* Link password protection
 
 ---
 
@@ -264,7 +294,15 @@ Fauzan
 
 ---
 
-## ⭐ Catatan
+## ⭐ Kesimpulan
 
-Project ini dibuat untuk pembelajaran dan pengembangan skill backend.
-Fitur akan terus ditambahkan seiring perkembangan.
+Project ini bukan sekadar URL shortener biasa, tetapi sudah mencakup:
+
+> ✅ Backend architecture
+> ✅ Database design
+> ✅ Real-world feature
+> ✅ Production-ready mindset
+
+Sehingga cocok digunakan sebagai **portfolio backend developer**.
+
+---
